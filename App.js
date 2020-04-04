@@ -1,16 +1,29 @@
 import React from 'react';
 import { StyleSheet, Text, View, StatusBar, TextInput, Dimensions, Platform, ScrollView } from 'react-native';
 import ToDo from './toDo'
+import { AppLoading } from 'expo'
+// import DeviceInfo from 'react-native-device-info';
+import { v5 as uuidv5 } from 'uuid';
+
+
 const { height, width } = Dimensions.get("window");
 
 export default class App extends React.Component {
   state = {
-    newToDo: ""
+    newToDo: "",
+    loadedToDos: false,
+    toDos: {}
+  }
+  componentDidMount = () => {
+    this._loadToDos();
   }
 
-
   render() {
-    const { newToDo } = this.state;
+    const { newToDo, loadedToDos, toDos } = this.state;
+
+    if (!loadedToDos) {
+      return <AppLoading />
+    }
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
@@ -23,9 +36,18 @@ export default class App extends React.Component {
             placeholderTextColor="#999"
             returnKeyType={"done"}
             autoCorrect={false}
+            onSubmitEditing={this._addTodo}
           />
-          <ScrollView>
-            <ToDo />
+          <ScrollView contentContainerStyle={styles.List}>
+            {Object.values(toDos).map(
+              toDo => <ToDo
+                key={toDo.id}
+                {...toDo}
+                deleteToDo={this._deleteTodo}
+                uncompleteToDo={this._uncompleteToDo}
+                completeToDo={this._completeToDo}
+                updateToDo={this._updateText}
+              />)}
           </ScrollView>
         </View>
       </View>
@@ -35,6 +57,104 @@ export default class App extends React.Component {
     this.setState({
       newToDo: text
     })
+  }
+  _loadToDos = () => {
+    this.setState({
+      loadedToDos: true
+    });
+  }
+  _deleteToDo = (id) => {
+    console.log("testing")
+    this.setState(prevState => {
+      const toDos = prevState.toDos;
+      delete toDos[id];
+      const newState = {
+        ...prevState,
+        ...toDos
+      }
+      return { ...newState }
+    });
+  }
+  _uncompleteToDo = (id) => {
+    this.setState(prevState => {
+      console.log(prevState);
+      const newState = {
+        ...prevState,
+        toDos: {
+          ...prevState.toDos,
+          [id]: {
+            ...prevState.toDos[id],
+            isCompleted: false
+          }
+
+        }
+      }
+      return { ...newState }
+    });
+  }
+  _completeToDo = (id) => {
+    this.setState(prevState => {
+      console.log(prevState);
+      const newState = {
+        ...prevState,
+        toDos: {
+          ...prevState.toDos,
+          [id]: {
+            ...prevState.toDos[id],
+            isCompleted: true
+          }
+
+        }
+      }
+      return { ...newState }
+    });
+  }
+
+  _updateText = (id, text) => {
+    this.setState(prevState => {
+      console.log(prevState);
+      const newState = {
+        ...prevState,
+        toDos: {
+          ...prevState.toDos,
+          [id]: {
+            ...prevState.toDos[id],
+            text: text
+          }
+
+        }
+      }
+      return { ...newState }
+    });
+  }
+
+  _addTodo = () => {
+    const { newToDo } = this.state;
+    if (newToDo !== "") {
+
+      this.setState(prevState => {
+        const ID = uuidv5(`${Date.now()}`, uuidv5.DNS);;
+        const newToDoObject = {
+          [ID]: {
+            id: ID,
+            isCompleted: false,
+            text: newToDo,
+            created: Date.now()
+          }
+        };
+        const newState = {
+          ...prevState,
+          newToDo: "",
+          toDos: {
+            ...prevState.toDos,
+            ...newToDoObject
+          }
+        };
+        // console.log(newState);
+
+        return { ...newState }
+      });
+    }
   }
 }
 
@@ -76,7 +196,12 @@ const styles = StyleSheet.create({
   input: {
     padding: 20,
     borderBottomColor: "#bbb",
-    borderWidth: 1,
-    fontSize: 25
+    borderWidth: 0,
+    fontSize: 25,
+    borderBottomWidth: 2
+
+  },
+  List: {
+    alignItems: "center"
   }
 });
