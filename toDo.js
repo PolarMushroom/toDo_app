@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput, Alert } from 'react-native'
 import PropTypes from 'prop-types'
 const { height, width } = Dimensions.get("window");
 
@@ -15,9 +15,9 @@ export default class toDo extends React.Component {
     static propTypes = {
         text: PropTypes.string.isRequired,
         isCompleted: PropTypes.bool.isRequired,
-        deleteToDo: PropTypes.func.isRequired,
         id: PropTypes.string.isRequired,
         uncompleteToDo: PropTypes.func.isRequired,
+        deleteToDo: PropTypes.func.isRequired,
         completeToDo: PropTypes.func.isRequired,
         updateToDo: PropTypes.func.isRequired
     }
