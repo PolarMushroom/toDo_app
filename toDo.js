@@ -12,6 +12,11 @@ export default class toDo extends React.Component {
             toDoValue: props.text
         }
     }
+    static getDerivedStateFromError(error) {
+        // Update state so the next render will show the fallback UI.
+        return { hasError: true };
+    }
+
     static propTypes = {
         text: PropTypes.string.isRequired,
         isCompleted: PropTypes.bool.isRequired,
@@ -23,6 +28,7 @@ export default class toDo extends React.Component {
     }
 
     _toggleComplete = () => {
+
         const { isCompleted, uncompleteToDo, completeToDo, id } = this.props
         if (isCompleted) {
             uncompleteToDo(id);
@@ -31,6 +37,7 @@ export default class toDo extends React.Component {
         }
     }
     _startEditing = () => {
+
         const { text } = this.props
         this.setState({
             isEditing: true,
@@ -38,6 +45,7 @@ export default class toDo extends React.Component {
         })
     }
     _finishEditing = () => {
+
         const { toDoValue } = this.state;
         const { id, updateToDo } = this.props
         updateToDo(id, toDoValue);
@@ -80,7 +88,7 @@ export default class toDo extends React.Component {
                                 <Text style={styles.actionText} >✏️</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPressOut={() => deleteToDo(id)}>
+                        <TouchableOpacity onPressOut={() => { deleteToDo(id) }}>
                             <View style={styles.actionContainer}  >
                                 <Text style={styles.actionText}>❌</Text>
                             </View>

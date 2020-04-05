@@ -27,6 +27,7 @@ export default class App extends React.Component {
         ...prevState,
         ...toDos
       }
+      this._saveToDo(newState.toDos);
       return { ...newState }
     });
   }
@@ -77,7 +78,7 @@ export default class App extends React.Component {
 
       this.setState({
         loadedToDos: true,
-        toDos: parsedToDos
+        toDos: parsedToDos || {}
       });
     } catch (error) {
       console.log(error)
@@ -165,7 +166,7 @@ export default class App extends React.Component {
             ...newToDoObject
           }
         };
-        // console.log(newState);
+        // console.log(newState.toDos);
         this._saveToDo(newState.toDos);
         return { ...newState }
       });
