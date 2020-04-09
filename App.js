@@ -149,7 +149,7 @@ export default class App extends React.Component {
     if (newToDo !== "") {
 
       this.setState(prevState => {
-        const ID = uuidv5(`${Date.now()}`, uuidv5.DNS);;
+        const ID = uuidv5(`${Date.now()}`, uuidv5.DNS);
         const newToDoObject = {
           [ID]: {
             id: ID,
